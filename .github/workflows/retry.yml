@@ -1,0 +1,120 @@
+name: OCI A1 Capacity Retry
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  actions: write
+
+concurrency:
+  group: oci-retry
+  cancel-in-progress: false
+
+jobs:
+  retry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install OCI CLI
+        run: |
+          curl -L -O https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
+          bash install.sh --accept-all-defaults --exec-dir /usr/local/bin
+          oci --version
+
+      - name: Configure OCI CLI
+        run: |
+          mkdir -p ~/.oci
+          umask 177
+          cat > ~/.oci/oci_api_key.pem << 'KEYEOF'
+          ${{ secrets.OCI_PRIVATE_KEY }}
+          KEYEOF
+          cat > ~/.oci/config << CFGEOF
+          [DEFAULT]
+          user=${{ secrets.OCI_USER }}
+          fingerprint=${{ secrets.OCI_FINGERPRINT }}
+          tenancy=${{ secrets.OCI_TENANCY }}
+          region=${{ secrets.OCI_REGION }}
+          key_file=~/.oci/oci_api_key.pem
+          CFGEOF
+          chmod 600 ~/.oci/oci_api_key.pem ~/.oci/config
+
+      - name: Attempt instance launch across availability domains
+        id: launch
+        run: |
+          ADS=("zIZW:EU-FRANKFURT-1-AD-1" "zIZW:EU-FRANKFURT-1-AD-2" "zIZW:EU-FRANKFURT-1-AD-3")
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" > /tmp/ssh_key.pub
+          SUCCESS=0
+          for AD in "${ADS[@]}"; do
+            echo "=== Trying $AD ==="
+            if OUTPUT=$(oci compute instance launch \
+              --compartment-id "${{ secrets.COMPARTMENT_ID }}" \
+              --availability-domain "$AD" \
+              --shape "VM.Standard.A1.Flex" \
+              --shape-config '{"ocpus":2,"memoryInGBs":12}' \
+              --display-name "hermes-agent-a1" \
+              --image-id "${{ secrets.IMAGE_ID }}" \
+              --subnet-id "${{ secrets.SUBNET_ID }}" \
+              --assign-public-ip true \
+              --ssh-authorized-keys-file /tmp/ssh_key.pub \
+              --boot-volume-size-in-gbs 200 2>&1); then
+                echo "$OUTPUT"
+                echo "$OUTPUT" > /tmp/launch_result.json
+                INSTANCE_ID=$(echo "$OUTPUT" | grep '"id"' | head -1 | sed -E 's/.*"id": "([^"]+)".*/\1/')
+                echo "instance_id=$INSTANCE_ID" >> "$GITHUB_OUTPUT"
+                echo "ad_used=$AD" >> "$GITHUB_OUTPUT"
+                echo "success=1" >> "$GITHUB_OUTPUT"
+                SUCCESS=1
+                break
+            else
+                echo "$OUTPUT"
+                echo "Failed on $AD, trying next..."
+            fi
+            sleep 5
+          done
+          if [ "$SUCCESS" -eq 0 ]; then
+            echo "success=0" >> "$GITHUB_OUTPUT"
+            echo "No capacity available in any AD this run."
+          fi
+
+      - name: Wait for public IP
+        if: steps.launch.outputs.success == '1'
+        id: ip
+        run: |
+          sleep 30
+          IP=$(oci compute instance list-vnics --instance-id "${{ steps.launch.outputs.instance_id }}" --query "data[0].\"public-ip\"" --raw-output)
+          echo "public_ip=$IP" >> "$GITHUB_OUTPUT"
+
+      - name: Create success issue
+        if: steps.launch.outputs.success == '1'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'OCI A1 instance launched successfully',
+              body: [
+                'Your Always Free A1.Flex instance is up.',
+                '',
+                'Availability domain: ${{ steps.launch.outputs.ad_used }}',
+                'Instance OCID: ${{ steps.launch.outputs.instance_id }}',
+                'Public IP: ${{ steps.ip.outputs.public_ip }}',
+                '',
+                'Connect with:',
+                '\`\`\`',
+                'ssh -i ~/.ssh/hermes_key opc@${{ steps.ip.outputs.public_ip }}',
+                '\`\`\`',
+                '',
+                'This workflow has disabled itself so it will not keep retrying.'
+              ].join('\n')
+            })
+
+      - name: Disable this workflow now that we succeeded
+        if: steps.launch.outputs.success == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow disable retry.yml --repo ${{ github.repository }}
