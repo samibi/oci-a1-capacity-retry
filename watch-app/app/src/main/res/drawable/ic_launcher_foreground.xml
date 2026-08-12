@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Open eye outline -->
+    <path
+        android:pathData="M22,54 C22,54 38,30 54,30 C70,30 86,54 86,54 C86,54 70,78 54,78 C38,78 22,54 22,54 Z"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4"
+        android:fillColor="#00000000" />
+
+    <!-- Pupil -->
+    <path
+        android:pathData="M54,44 C60.6274,44 66,49.3726 66,56 C66,62.6274 60.6274,68 54,68 C47.3726,68 42,62.6274 42,56 C42,49.3726 47.3726,44 54,44 Z"
+        android:fillColor="#FFFFFF" />
+</vector>
