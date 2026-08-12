@@ -156,19 +156,6 @@ class MonitoringService : LifecycleService() {
     private suspend fun startExercise() {
         val exerciseClient = HealthServices.getClient(this).exerciseClient
         try {
-            val capabilities = exerciseClient.getCapabilitiesAsync().await()
-            val supportsWorkout = ExerciseType.WORKOUT in capabilities.supportedExerciseTypes
-            val typeCaps = if (supportsWorkout) capabilities.getExerciseTypeCapabilities(ExerciseType.WORKOUT) else null
-            val fastBatching = typeCaps?.supportedBatchingModeOverrides?.contains(BatchingMode.HEART_RATE_5_SECONDS) == true
-
-            MonitorState.flow.value = MonitorState.flow.value.copy(fastBatchingSupported = fastBatching)
-
-            val configBuilder = ExerciseConfig.builder(ExerciseType.WORKOUT)
-                .setDataTypes(setOf(DataType.HEART_RATE_BPM))
-                .setIsAutoPauseAndResumeEnabled(false)
-                .setIsGpsEnabled(false)
-            if (fastBatching) configBuilder.setBatchingModeOverrides(setOf(BatchingMode.HEART_RATE_5_SECONDS))
-
             val callback = object : ExerciseUpdateCallback {
                 override fun onExerciseUpdateReceived(update: ExerciseUpdate) {
                     val samples = update.latestMetrics.getData(DataType.HEART_RATE_BPM)
@@ -189,7 +176,28 @@ class MonitoringService : LifecycleService() {
             }
             exerciseCallback = callback
             exerciseClient.setUpdateCallback(callback)
-            exerciseClient.startExerciseAsync(configBuilder.build()).await()
+
+            fun buildConfig(withFastBatching: Boolean): ExerciseConfig {
+                val builder = ExerciseConfig.builder(ExerciseType.WORKOUT)
+                    .setDataTypes(setOf(DataType.HEART_RATE_BPM))
+                    .setIsAutoPauseAndResumeEnabled(false)
+                    .setIsGpsEnabled(false)
+                if (withFastBatching) {
+                    builder.setBatchingModeOverrides(setOf(BatchingMode.HEART_RATE_5_SECONDS))
+                }
+                return builder.build()
+            }
+
+            // health-services-client 1.0.0 has no capability query for batching-mode
+            // overrides, so probe by attempting the fast-batching config first.
+            val fastBatching = try {
+                exerciseClient.startExerciseAsync(buildConfig(withFastBatching = true)).await()
+                true
+            } catch (e: Exception) {
+                exerciseClient.startExerciseAsync(buildConfig(withFastBatching = false)).await()
+                false
+            }
+            MonitorState.flow.value = MonitorState.flow.value.copy(fastBatchingSupported = fastBatching)
         } catch (e: Exception) {
             MonitorState.flow.value = MonitorState.flow.value.copy(error = e.message)
         }
