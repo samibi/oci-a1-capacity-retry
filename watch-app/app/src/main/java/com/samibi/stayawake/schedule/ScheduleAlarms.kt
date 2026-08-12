@@ -35,7 +35,10 @@ object ScheduleAlarms {
         var earliest: ZonedDateTime? = null
         var earliestEvent: String? = null
         for (window in windows) {
-            for (dayOffset in 0..7) {
+            // dayOffset starts at -1 (yesterday) so that a window whose start day has already
+            // passed but whose midnight-crossing end still lies ahead (e.g. Mon 23:00->01:00,
+            // discovered on Tuesday after a reboot) still yields its "stop" candidate.
+            for (dayOffset in -1..7) {
                 val date = now.toLocalDate().plusDays(dayOffset.toLong())
                 if (date.dayOfWeek.value !in window.days) continue
                 val start = date.atStartOfDay(now.zone).plusMinutes(window.startMin.toLong())

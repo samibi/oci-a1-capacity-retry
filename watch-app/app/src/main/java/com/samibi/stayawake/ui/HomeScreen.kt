@@ -73,11 +73,11 @@ fun HomeScreen(navController: NavHostController) {
         }
     }
 
-    val bodySensorsGranted = refreshTrigger.let {
+    val bodySensorsGranted = remember(refreshTrigger) {
         ContextCompat.checkSelfPermission(context, Manifest.permission.BODY_SENSORS) ==
             PackageManager.PERMISSION_GRANTED
     }
-    val backgroundGranted = refreshTrigger.let {
+    val backgroundGranted = remember(refreshTrigger) {
         Build.VERSION.SDK_INT < 33 ||
             ContextCompat.checkSelfPermission(context, BODY_SENSORS_BACKGROUND) ==
             PackageManager.PERMISSION_GRANTED
