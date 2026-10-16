@@ -23,7 +23,7 @@ class ShareReceiverActivity : AppCompatActivity() {
     private var uris: List<Uri> = emptyList()
 
     private val askNotifications =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { startConvert() }
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { finish() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +52,9 @@ class ShareReceiverActivity : AppCompatActivity() {
         }
         if (savedInstanceState != null) return // permission dialog result will arrive
 
+        // Conversion never waits for the permission answer.
+        startConvert()
+
         val needsPermission = Build.VERSION.SDK_INT >= 33 &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
             PackageManager.PERMISSION_GRANTED &&
@@ -60,7 +63,7 @@ class ShareReceiverActivity : AppCompatActivity() {
             Prefs.sp(this).edit().putBoolean(Prefs.KEY_ASKED_NOTIF, true).apply()
             askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
         } else {
-            startConvert()
+            finish()
         }
     }
 
@@ -73,7 +76,6 @@ class ShareReceiverActivity : AppCompatActivity() {
         svc.clipData = clip
         ContextCompat.startForegroundService(this, svc)
         Toast.makeText(this, getString(R.string.creating_from, uris.size), Toast.LENGTH_SHORT).show()
-        finish()
     }
 
     private fun extractUris(i: Intent): List<Uri> = when (i.action) {
