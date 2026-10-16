@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Pix2Doc</string>
+    <string name="default_filename_pattern" translatable="false">\'Pix2Doc_\'yyyy-MM-dd_HH-mm-ss</string>
+
+    <string name="tagline">Images to A4 PDF, original quality</string>
+    <string name="settings">Settings</string>
+    <string name="pick_photos">Choose photos</string>
+    <string name="pick_photos_sub">Multi-select from the gallery</string>
+    <string name="pick_files">Choose image files</string>
+    <string name="pick_files_sub">From folders, Drive, USB…</string>
+    <string name="open_pdf">Open existing PDF</string>
+    <string name="open_pdf_sub">Reorder its pages</string>
+    <string name="recent_files">Recent files</string>
+    <string name="no_recents">No PDFs yet</string>
+    <string name="share_hint">Fastest way: select photos in the gallery → Share → Pix2Doc. The PDF is created in the background without opening a screen.</string>
+    <string name="recent_meta">%1$d pages · %2$s · %3$s</string>
+    <string name="open_viewer">Open in viewer</string>
+    <string name="share">Share</string>
+    <string name="remove_from_list">Remove from list</string>
+    <string name="no_viewer">No PDF viewer installed</string>
+
+    <string name="creating_pdf">Creating PDF…</string>
+    <string name="progress_of">%1$d of %2$d · %3$s</string>
+    <string name="creating_from">Creating PDF from %1$d images…</string>
+    <string name="preparing">Preparing…</string>
+    <string name="cancel">Cancel</string>
+    <string name="cancelled">PDF creation cancelled</string>
+    <string name="saved">Saved: %1$s</string>
+    <string name="saved_to">Saved %1$s to %2$s</string>
+    <string name="no_images">No images received</string>
+    <string name="file_gone">The temporary PDF no longer exists</string>
+
+    <string name="ch_progress">PDF creation progress</string>
+    <string name="ch_done">Finished PDFs</string>
+    <string name="notif_progress">Creating PDF… %1$d of %2$d</string>
+    <string name="notif_done">Created: %1$s</string>
+    <string name="notif_choose_location">PDF ready · choose where to save</string>
+    <string name="notif_error">Could not create PDF</string>
+    <string name="pages_size">%1$d pages · %2$s</string>
+    <string name="reorder">Reorder pages</string>
+    <string name="save_as">Save as…</string>
+    <string name="save_default">Default folder</string>
+
+    <string name="reorder_pages">Reorder pages</string>
+    <string name="editor_subtitle">%1$s · %2$d pages</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_original">Original order</string>
+    <string name="sort_name">File name</string>
+    <string name="sort_date">Photo date</string>
+    <string name="reverse">Reverse order</string>
+    <string name="hint_original">Order the images arrived in. Long-press a page and drag to move it. Tap to view.</string>
+    <string name="hint_name">Sorted by original file name.</string>
+    <string name="hint_date">Sorted by photo date (EXIF). Without EXIF: file date.</string>
+    <string name="no_metadata">This PDF has no stored file names/dates (not created by Pix2Doc). Reorder manually.</string>
+    <string name="save_overwrite">Save (overwrite)</string>
+    <string name="page_n">Page %1$d</string>
+    <string name="close">Close</string>
+    <string name="cannot_open_pdf">Cannot open PDF</string>
+    <string name="read_only_save_as">This file is read-only. Choose where to save a copy.</string>
+    <string name="unsaved_title">Discard changes?</string>
+    <string name="unsaved_message">The new page order has not been saved.</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep editing</string>
+
+    <string name="pref_cat_general">General</string>
+    <string name="pref_language">Language</string>
+    <string name="lang_system">System default</string>
+    <string name="pref_cat_save">Saving</string>
+    <string name="pref_folder">Default folder</string>
+    <string name="pref_folder_reset">Use Download/Pix2Doc</string>
+    <string name="pref_folder_reset_summary">Reset the default folder</string>
+    <string name="pref_ask_location">Ask where to save every time</string>
+    <string name="pref_ask_location_summary">Off: saved straight to the default folder, no screen</string>
+    <string name="pref_filename">File name pattern</string>
+    <string name="pref_cat_pages">Images and pages</string>
+    <string name="pref_page_size">Page size</string>
+    <string name="size_a4">A4 (fit, auto orientation)</string>
+    <string name="size_letter">Letter (fit, auto orientation)</string>
+    <string name="size_image">Page = image size (300 dpi)</string>
+    <string name="pref_margin">Margin</string>
+    <string name="margin_0">None</string>
+    <string name="margin_5">5 mm</string>
+    <string name="margin_10">10 mm</string>
+    <string name="margin_15">15 mm</string>
+    <string name="pref_cap_dpi">Limit to 300 dpi</string>
+    <string name="pref_cap_dpi_summary">Smaller file. Off: original pixels kept untouched.</string>
+    <string name="pref_share_order">Default order when sharing</string>
+</resources>

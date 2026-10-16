@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/pref_cat_general" app:iconSpaceReserved="false">
+        <ListPreference
+            app:key="language"
+            app:title="@string/pref_language"
+            app:entries="@array/language_entries"
+            app:entryValues="@array/language_values"
+            app:defaultValue=""
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_cat_save" app:iconSpaceReserved="false">
+        <Preference
+            app:key="folder_uri"
+            app:title="@string/pref_folder"
+            app:iconSpaceReserved="false" />
+        <Preference
+            app:key="folder_reset"
+            app:title="@string/pref_folder_reset"
+            app:summary="@string/pref_folder_reset_summary"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            app:key="ask_location"
+            app:title="@string/pref_ask_location"
+            app:summary="@string/pref_ask_location_summary"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <EditTextPreference
+            app:key="filename_pattern"
+            app:title="@string/pref_filename"
+            app:defaultValue="@string/default_filename_pattern"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/pref_cat_pages" app:iconSpaceReserved="false">
+        <ListPreference
+            app:key="page_size"
+            app:title="@string/pref_page_size"
+            app:entries="@array/page_size_entries"
+            app:entryValues="@array/page_size_values"
+            app:defaultValue="a4"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+        <ListPreference
+            app:key="margin_mm"
+            app:title="@string/pref_margin"
+            app:entries="@array/margin_entries"
+            app:entryValues="@array/margin_values"
+            app:defaultValue="5"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+        <SwitchPreferenceCompat
+            app:key="cap_dpi"
+            app:title="@string/pref_cap_dpi"
+            app:summary="@string/pref_cap_dpi_summary"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false" />
+        <ListPreference
+            app:key="share_order"
+            app:title="@string/pref_share_order"
+            app:entries="@array/order_entries"
+            app:entryValues="@array/order_values"
+            app:defaultValue="sent"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+</PreferenceScreen>
