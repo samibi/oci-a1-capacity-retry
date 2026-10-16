@@ -9,6 +9,9 @@
 - New repo creation blocked from this session (GitHub 403) → code staged in `Pix2Doc/` on branch `ccr-8e951833-b3kiye` of oci-a1-capacity-retry.
 - No Android SDK in the session container → build verified only through GitHub Actions (`.github/workflows/pix2doc.yml`).
 
+- Mockup approved by user.
+- CI run #2 green: unit tests pass, debug APK built (artifact `Pix2Doc-debug-apk`). Not yet tested on a device.
+
 ## Next
 - Move `Pix2Doc/` to its own repo once created.
 - Test on device: share flow, EXIF rotation, overwrite vs. save as, Hebrew UI.
